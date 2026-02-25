@@ -16,24 +16,5 @@ jobs:
       with:
         python-version: '3.12'
 
-    - name: 🔍 Show exact file location
-      run: |
-        pwd
-        echo "=== Root contents ==="
-        ls -la
-        echo "=== Where is hello_mastery.py? ==="
-        find . -name hello_mastery.py
-
-    - name: Run hello script (auto-detects nesting)
-      run: |
-        if [ -f "01-foundations/hello_mastery.py" ]; then
-          echo "✅ Found at root"
-          python 01-foundations/hello_mastery.py
-        elif [ -f "python-mastery-journey/01-foundations/hello_mastery.py" ]; then
-          echo "⚠️  Found inside nested folder — using it"
-          python python-mastery-journey/01-foundations/hello_mastery.py
-        else
-          echo "❌ Script not found anywhere!"
-          find . -name "*.py"
-          exit 1
-        fi
+    - name: Run hello_mastery.py
+      run: python 01-foundations/hello_mastery.py
