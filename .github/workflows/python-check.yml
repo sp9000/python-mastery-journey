@@ -10,9 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
+
+    - name: 🔍 Debug - show current folder structure
+      run: |
+        pwd
+        ls -la
+        echo "=== Full structure ==="
+        find . -type f | head -20
+
     - name: Run hello script
       run: python 01-foundations/hello_mastery.py
