@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/local/bin/env python3
 
 """
 My first Python Mastery script
