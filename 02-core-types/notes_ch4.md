@@ -81,6 +81,7 @@ Table 4-1 summary:
 - Mutable (lists, dicts) vs Immutable (strings, tuples, numbers).
 - Comprehensions = superpower for lists/dicts/sets.
 - Nesting = how real data structures are built.
+- Getting stronger at git (use this for changes)
 
 ## Project Connection (expenses.py)
 - Used list of dicts for expenses.
