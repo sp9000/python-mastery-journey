@@ -1,3 +1,4 @@
+# .github/workflows/python-check.yml
 name: Python CI
 
 on:
@@ -16,5 +17,11 @@ jobs:
       with:
         python-version: '3.12'
 
-    - name: Run hello_mastery.py
-      run: python 01-foundations/hello_mastery.py
+    - name: Install pytest
+      run: pip install pytest
+
+    - name: Run Module 2 tests
+      run: pytest core_types/tests/ -v
+
+    - name: Run expense script smoke test
+      run: python core_types/expenses.py total
