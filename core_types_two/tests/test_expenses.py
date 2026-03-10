@@ -2,7 +2,7 @@
 
 import pytest
 from pathlib import Path
-from core_types.expenses import load_expenses, save_expenses, add_expense
+from core_types_two.expenses import load_expenses, save_expenses, add_expense
 
 DATA_FILE = Path("core_types/expenses.json")  # Add this constant for easy reference
 
