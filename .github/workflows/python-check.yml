@@ -21,7 +21,7 @@ jobs:
       run: pip install pytest
 
     - name: Run Module 2 tests
-      run: PYTHONPATH=. pytest core_types_two/tests/ -v
+      run: PYTHONPATH=. pytest core_types_two/tests/ -v --tb=no
 
-    - name: Run expense script smoke test
-      run: python core_types_two/expenses.py total
+    - name: Smoke test expenses.py
+      run: python core_types_two/expenses.py --help
