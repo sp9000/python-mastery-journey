@@ -10,6 +10,29 @@ from pathlib import Path
 from datetime import date
 from typing import List, Dict, Any
 
+# Global data file path
+DATA_FILE = Path("core_types_two/expenses.json")
+
+
+def load_expenses() -> List[Dict[str, Any]]:
+    """Load expenses from JSON file. Return empty list if file doesn't exist."""
+    if DATA_FILE.exists():
+        try:
+            return json.loads(DATA_FILE.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, IOError):
+            print("Warning: Could not read expenses file. Starting fresh.")
+            return []
+    return []
+
+
+def save_expenses(expenses: List[Dict[str, Any]]) -> None:
+    """Save expenses list to JSON file."""
+    DATA_FILE.parent.mkdir(exist_ok=True)  # Ensure directory exists
+    DATA_FILE.write_text(
+        json.dumps(expenses, indent=2, ensure_ascii=False),
+        encoding="utf-8"
+    )
+
 
 def main() -> None:
     """Main entry point for the CLI application."""
@@ -18,10 +41,9 @@ def main() -> None:
         epilog="Use 'add', 'list', 'total', or 'summary' commands"
     )
 
-    # Create subparsers for different commands (like git add, git commit)
     subparsers = parser.add_subparsers(
-        dest="command",           # This will store which command was used
-        required=True,            # Force user to pick a command
+        dest="command",
+        required=True,
         help="Available commands"
     )
 
@@ -41,18 +63,72 @@ def main() -> None:
     # === SUMMARY COMMAND ===
     subparsers.add_parser("summary", help="Show spending by category")
 
-    # Parse the arguments
     args = parser.parse_args()
 
-    # Route to the right function based on command
+    # === COMMAND ROUTING ===
     if args.command == "add":
-        print(f"Would add expense: ${args.amount} in category '{args.category}'")
+        add_expense(args.amount, args.category, args.date)
     elif args.command == "list":
-        print("Would list all expenses")
+        list_expenses()
     elif args.command == "total":
-        print(f"Would show total (category filter: {args.category})")
+        total_expenses(args.category)
     elif args.command == "summary":
-        print("Would show category summary")
+        summary_expenses()
+
+
+# ==================== COMMAND FUNCTIONS ====================
+
+def add_expense(amount: float, category: str, date_str: str = None) -> None:
+    """Add a new expense and save it."""
+    expenses = load_expenses()
+    
+    entry = {
+        "amount": round(float(amount), 2),
+        "category": category.strip(),
+        "date": date_str or str(date.today())
+    }
+    
+    expenses.append(entry)
+    save_expenses(expenses)
+    print(f"✅ Added ${entry['amount']:.2f} to '{entry['category']}'")
+
+
+def list_expenses() -> None:
+    """List all expenses."""
+    expenses = load_expenses()
+    if not expenses:
+        print("No expenses yet.")
+        return
+    for i, e in enumerate(expenses, 1):
+        print(f"{i:2d}. ${e['amount']:>7.2f}  {e['date']:10}  {e['category']}")
+
+
+def total_expenses(category: str = None) -> None:
+    """Show total expenses, optionally filtered by category."""
+    expenses = load_expenses()
+    if category:
+        total = sum(e["amount"] for e in expenses if e["category"].lower() == category.lower())
+        print(f"Total for '{category}': ${total:.2f}")
+    else:
+        total = sum(e["amount"] for e in expenses)
+        print(f"Grand total: ${total:.2f}")
+
+
+def summary_expenses() -> None:
+    """Show summary by category using dict comprehension."""
+    expenses = load_expenses()
+    if not expenses:
+        print("No expenses yet.")
+        return
+    
+    summary = {
+        cat: sum(e["amount"] for e in expenses if e["category"] == cat)
+        for cat in {e["category"] for e in expenses}
+    }
+    
+    print("📊 Category Summary:")
+    for cat, total in sorted(summary.items()):
+        print(f"  {cat:12} : ${total:.2f}")
 
 
 if __name__ == "__main__":
