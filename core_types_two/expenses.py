@@ -32,50 +32,7 @@ def save_expenses(expenses: List[Dict[str, Any]]) -> None:
         json.dumps(expenses, indent=2, ensure_ascii=False),
         encoding="utf-8"
     )
-
-
-def main() -> None:
-    """Main entry point for the CLI application."""
-    parser = argparse.ArgumentParser(
-        description="Personal Finance Tracker - Practice Core Data Types",
-        epilog="Use 'add', 'list', 'total', or 'summary' commands"
-    )
-
-    subparsers = parser.add_subparsers(
-        dest="command",
-        required=True,
-        help="Available commands"
-    )
-
-    # === ADD COMMAND ===
-    add_parser = subparsers.add_parser("add", help="Add a new expense")
-    add_parser.add_argument("amount", type=float, help="Expense amount (e.g. 12.50)")
-    add_parser.add_argument("category", type=str, help="Expense category (e.g. Coffee)")
-    add_parser.add_argument("--date", type=str, help="Date in YYYY-MM-DD format (optional)")
-
-    # === LIST COMMAND ===
-    subparsers.add_parser("list", help="List all expenses")
-
-    # === TOTAL COMMAND ===
-    total_parser = subparsers.add_parser("total", help="Show total expenses")
-    total_parser.add_argument("--category", type=str, help="Filter by category")
-
-    # === SUMMARY COMMAND ===
-    subparsers.add_parser("summary", help="Show spending by category")
-
-    args = parser.parse_args()
-
-    # === COMMAND ROUTING ===
-    if args.command == "add":
-        add_expense(args.amount, args.category, args.date)
-    elif args.command == "list":
-        list_expenses()
-    elif args.command == "total":
-        total_expenses(args.category)
-    elif args.command == "summary":
-        summary_expenses()
-
-
+    
 # ==================== COMMAND FUNCTIONS ====================
 
 def add_expense(amount: float, category: str, date_str: str = None) -> None:
@@ -129,6 +86,48 @@ def summary_expenses() -> None:
     print("📊 Category Summary:")
     for cat, total in sorted(summary.items()):
         print(f"  {cat:12} : ${total:.2f}")
+
+
+def main() -> None:
+    """Main entry point for the CLI application."""
+    parser = argparse.ArgumentParser(
+        description="Personal Finance Tracker - Practice Core Data Types",
+        epilog="Use 'add', 'list', 'total', or 'summary' commands"
+    )
+
+    subparsers = parser.add_subparsers(
+        dest="command",
+        required=True,
+        help="Available commands"
+    )
+
+    # === ADD COMMAND ===
+    add_parser = subparsers.add_parser("add", help="Add a new expense")
+    add_parser.add_argument("amount", type=float, help="Expense amount (e.g. 12.50)")
+    add_parser.add_argument("category", type=str, help="Expense category (e.g. Coffee)")
+    add_parser.add_argument("--date", type=str, help="Date in YYYY-MM-DD format (optional)")
+
+    # === LIST COMMAND ===
+    subparsers.add_parser("list", help="List all expenses")
+
+    # === TOTAL COMMAND ===
+    total_parser = subparsers.add_parser("total", help="Show total expenses")
+    total_parser.add_argument("--category", type=str, help="Filter by category")
+
+    # === SUMMARY COMMAND ===
+    subparsers.add_parser("summary", help="Show spending by category")
+
+    args = parser.parse_args()
+
+    # === COMMAND ROUTING ===
+    if args.command == "add":
+        add_expense(args.amount, args.category, args.date)
+    elif args.command == "list":
+        list_expenses()
+    elif args.command == "total":
+        total_expenses(args.category)
+    elif args.command == "summary":
+        summary_expenses()
 
 
 if __name__ == "__main__":
