@@ -32,23 +32,41 @@ def save_expenses(expenses: List[Dict[str, Any]]) -> None:
         json.dumps(expenses, indent=2, ensure_ascii=False),
         encoding="utf-8"
     )
-    
+
 # ==================== COMMAND FUNCTIONS ====================
 
 def add_expense(amount: float, category: str, date_str: str = None) -> None:
     """Add a new expense and save it."""
-    expenses = load_expenses()
+    try:
+        # Validate amount (Chapter 5 numeric concepts)
+        amount = float(amount)
+        if amount <= 0:
+            print("❌ Error: Amount must be greater than zero.")
+            return
+        
+        # Validate category
+        category = category.strip()
+        if not category:
+            print("❌ Error: Category cannot be empty.")
+            return
     
-    entry = {
-        "amount": round(float(amount), 2),
-        "category": category.strip(),
-        "date": date_str or str(date.today())
-    }
+        expenses = load_expenses()
     
-    expenses.append(entry)
-    save_expenses(expenses)
-    print(f"✅ Added ${entry['amount']:.2f} to '{entry['category']}'")
+        entry = {
+         "amount": round(float(amount), 2),
+           "category": category.strip(),
+           "date": date_str or str(date.today())
+      }
+    
+        expenses.append(entry)
+        save_expenses(expenses)
+    
+        print(f"✅ Added ${entry['amount']:.2f} to '{entry['category']}' on {entry['date']}")
 
+    except (ValueError, TypeError):
+        print("❌ Error: Amount must be a valid number.")
+    except Exception as e:
+        print(f"❌ Unexpected error: {e}")
 
 def list_expenses() -> None:
     """List all expenses."""
@@ -103,7 +121,7 @@ def main() -> None:
 
     # === ADD COMMAND ===
     add_parser = subparsers.add_parser("add", help="Add a new expense")
-    add_parser.add_argument("amount", type=float, help="Expense amount (e.g. 12.50)")
+    add_parser.add_argument("amount", type=str, help="Expense amount (e.g. 12.50)")
     add_parser.add_argument("category", type=str, help="Expense category (e.g. Coffee)")
     add_parser.add_argument("--date", type=str, help="Date in YYYY-MM-DD format (optional)")
 
