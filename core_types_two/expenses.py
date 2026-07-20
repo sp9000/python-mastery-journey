@@ -74,6 +74,10 @@ def list_expenses() -> None:
     if not expenses:
         print("No expenses yet.")
         return
+    
+    print(f"{'#':<3} {'Amount':>8} {'Date':<12} Category")
+    print("-" * 50)
+
     for i, e in enumerate(expenses, 1):
         print(f"{i:2d}. ${e['amount']:>7.2f}  {e['date']:10}  {e['category']}")
 
@@ -81,12 +85,16 @@ def list_expenses() -> None:
 def total_expenses(category: str = None) -> None:
     """Show total expenses, optionally filtered by category."""
     expenses = load_expenses()
+    if not expenses:
+        print("No expenses recorded yet.")
+        return
     if category:
+        filtered = [e for e in expenses if e["category"].lower() == category.lower()]
         total = sum(e["amount"] for e in expenses if e["category"].lower() == category.lower())
-        print(f"Total for '{category}': ${total:.2f}")
+        print(f"Total for '{category}': ${total:.2f} ({len(filtered)} entries)")
     else:
         total = sum(e["amount"] for e in expenses)
-        print(f"Grand total: ${total:.2f}")
+        print(f"Grand total: ${total:.2f} ({len(expenses)} entries)")
 
 
 def summary_expenses() -> None:
@@ -96,6 +104,7 @@ def summary_expenses() -> None:
         print("No expenses yet.")
         return
     
+    # Dictionary comprehension (Chapter 4/8)
     summary = {
         cat: sum(e["amount"] for e in expenses if e["category"] == cat)
         for cat in {e["category"] for e in expenses}
@@ -103,7 +112,8 @@ def summary_expenses() -> None:
     
     print("📊 Category Summary:")
     for cat, total in sorted(summary.items()):
-        print(f"  {cat:12} : ${total:.2f}")
+        count = sum(1 for e in expenses if e["category"] == cat)
+        print(f"  {cat:12} : ${total:>7.2f} ({count} entries)")
 
 
 def main() -> None:
