@@ -138,13 +138,14 @@ def delete_expense(index: int) -> None:
 def main() -> None:
     """Main entry point for the CLI application."""
     parser = argparse.ArgumentParser(
-        description="Personal Finance Tracker - Practice Core Data Types",
-        epilog="Use 'add', 'list', 'total', or 'summary' commands"
+        description="💰 Personal Finance Tracker",
+        epilog="Built as part of Python Mastery Rubric - Module 2",
+        formatter_class=argparse.RawDescriptionHelpFormatter
     )
 
     subparsers = parser.add_subparsers(
         dest="command",
-        required=True,
+        required=False,
         help="Available commands"
     )
 
@@ -169,6 +170,10 @@ def main() -> None:
     delete_parser.add_argument("number", type=int, help="Expense number from 'list' command")
 
     args = parser.parse_args()
+
+    if not args.command:          # New check
+        parser.print_help()
+        return
 
     # === COMMAND ROUTING ===
     if args.command == "add":
