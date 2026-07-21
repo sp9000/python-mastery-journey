@@ -115,6 +115,25 @@ def summary_expenses() -> None:
         count = sum(1 for e in expenses if e["category"] == cat)
         print(f"  {cat:12} : ${total:>7.2f} ({count} entries)")
 
+def delete_expense(index: int) -> None:
+    """Delete an expense by its list number (1-based)."""
+    expenses = load_expenses()
+    
+    if not expenses:
+        print("No expenses to delete.")
+        return
+    
+    # Convert to 0-based index
+    idx = index - 1
+    
+    if idx < 0 or idx >= len(expenses):
+        print(f"❌ Invalid number. Please use a number between 1 and {len(expenses)}.")
+        return
+    
+    deleted = expenses.pop(idx)
+    save_expenses(expenses)
+    
+    print(f"🗑️  Deleted: ${deleted['amount']:.2f} - {deleted['category']} ({deleted['date']})")
 
 def main() -> None:
     """Main entry point for the CLI application."""
@@ -145,6 +164,10 @@ def main() -> None:
     # === SUMMARY COMMAND ===
     subparsers.add_parser("summary", help="Show spending by category")
 
+    # === DELETE COMMAND ===
+    delete_parser = subparsers.add_parser("delete", help="Delete an expense by number")
+    delete_parser.add_argument("number", type=int, help="Expense number from 'list' command")
+
     args = parser.parse_args()
 
     # === COMMAND ROUTING ===
@@ -156,6 +179,8 @@ def main() -> None:
         total_expenses(args.category)
     elif args.command == "summary":
         summary_expenses()
+    elif args.command == "delete":
+        delete_expense(args.number)
 
 
 if __name__ == "__main__":
